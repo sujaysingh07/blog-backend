@@ -4,11 +4,14 @@ class UserSchema(BaseModel):
     name:str
     email:str
     password:str
+    role:str
 
 class UserResponseSchema(BaseModel):
     id:int
     name:str
     email:str
+
+
 
 class UserLoginSchema(BaseModel):
     email:str

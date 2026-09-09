@@ -9,11 +9,16 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "fastapi[standard]>=0.141.1",
+    "passlib[bcrypt]>=1.7.4",
     "psycopg2>=2.9.12",
     "pwdlib[argon2]>=0.3.1",
     "pyjwt>=2.13.0",
     "sqlalchemy>=2.0.52",
 ]
 
+[project.scripts]
+dev = "src.main:start_dev"
+
 [tool.uv]
 package = false
+
