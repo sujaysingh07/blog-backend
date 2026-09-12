@@ -4,7 +4,7 @@ class UserSchema(BaseModel):
     name:str
     email:str
     password:str
-    role:str
+    role: str = "user"
 
 class UserResponseSchema(BaseModel):
     id:int
