@@ -35,4 +35,4 @@ app.include_router(global_router)
 
 @app.get("/home")
 def home():
-    return {"message": "All system is operational."}
+    return {"message": "All system is operational and running fine."}
