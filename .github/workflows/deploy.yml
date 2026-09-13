@@ -36,5 +36,6 @@ jobs:
           docker build -t ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest .
 
       - name: Push Docker image
+      
         run: |
           docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
