@@ -26,6 +26,24 @@ def get_blog(skip: int, limit: int, db: Session, search: Optional[str] = None):
     return all_blog
 
 
+def get_published_blogs(skip: int, limit: int, db: Session, search: Optional[str] = None):
+    query = db.query(Blog).filter(Blog.status == "published")
+
+    if search and search.strip():
+        search_filter = f"%{search.strip()}%"
+        query = query.filter(
+            or_(
+                Blog.title.ilike(search_filter),
+                Blog.body_content.ilike(search_filter),
+                Blog.description.ilike(search_filter),
+            )
+        )
+
+    return (
+        query.order_by(Blog.published_at.desc()).offset(skip).limit(limit).all()
+    )
+
+
 def create_blog(
     blog_data: BlogSchema,
     db: Session,
@@ -105,6 +123,19 @@ def delete_blog(blog_id: int, db: Session):
 
 def get_blog_by_id(blog_id: int, db: Session):
     blog = db.query(Blog).filter(Blog.id == blog_id).first()
+    if not blog:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Blog not found"
+        )
+    return blog
+
+
+def get_published_blog_by_id(blog_id: int, db: Session):
+    blog = (
+        db.query(Blog)
+        .filter(Blog.id == blog_id, Blog.status == "published")
+        .first()
+    )
     if not blog:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Blog not found"

@@ -53,20 +53,18 @@ def login_user(body: UserLoginSchema ,db: Session,response:Response):
 
 
 def get_current_user(
-    access_token: str | None = Cookie(default=None), 
+    access_token: str | None = Cookie(default=None),
     db: Session = Depends(get_db)
-): 
-    print(access_token)
-    credentials_exception = HTTPException(
+):  
+    unauthorized_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        detail="You are not authorized. Please login to continue.",
         headers={"WWW-Authenticate": "Bearer"},
     )
     if not access_token:
-        raise credentials_exception
+        raise unauthorized_exception
 
     try:
-
         payload = jwt.decode(
             access_token,
             app_settings.SECRET_KEY,
@@ -76,15 +74,21 @@ def get_current_user(
         user_id = payload.get("sub")
 
         if user_id is None:
-            raise credentials_exception
+            raise unauthorized_exception
 
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Your session has expired. Please login again.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     except jwt.PyJWTError:
-        raise credentials_exception
+        raise unauthorized_exception
 
     user = db.query(User).filter(User.id == int(user_id)).first()
 
     if user is None:
-        raise credentials_exception
+        raise unauthorized_exception
 
     return user
 
