@@ -6,6 +6,7 @@ from src.utils.db import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
 from src.routes.auth_routes import auth_router
 from src.routes.blog_routes import blog_router
+from src.routes.ai_routes import ai_router
 
 app = FastAPI(title="admin dashboard")
 def start_dev():
@@ -29,7 +30,7 @@ global_router = APIRouter(prefix="/api/v1")
 
 global_router.include_router(auth_router)
 global_router.include_router(blog_router)
-
+global_router.include_router(ai_router)
 app.include_router(global_router)
 
 

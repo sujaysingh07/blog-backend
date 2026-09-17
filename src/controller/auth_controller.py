@@ -31,16 +31,11 @@ def login_user(body: UserLoginSchema ,db: Session,response:Response):
     if not user or not verify_password(body.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     access_token_expires = timedelta(minutes=app_settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    # refresh_token_expires = timedelta(days=app_settings.REFRESH_TOKEN_EXPIRE_DAYS)
     
     access_token = create_access_token(
         data={"sub": str(user.id)},
         expires_delta=access_token_expires,
     )
-    # refresh_token = create_access_token(
-    #     data={"sub": str(user.id)},
-    #     expires_delta=refresh_token_expires,
-    # )
     response.set_cookie(
     key=COOKIE_NAME,
     value=access_token,
@@ -86,7 +81,6 @@ def get_current_user(
         raise unauthorized_exception
 
     user = db.query(User).filter(User.id == int(user_id)).first()
-
     if user is None:
         raise unauthorized_exception
 
